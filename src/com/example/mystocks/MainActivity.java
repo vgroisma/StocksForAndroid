@@ -31,7 +31,7 @@ public class MainActivity extends Activity implements OnClickListener
 
 	private SharedPreferences stockSymbolsEntered;
 	private TableLayout stockTableScrollView;
-	
+
 	Button deleteStocksdata;
 	Button addNew;
 
@@ -45,41 +45,47 @@ public class MainActivity extends Activity implements OnClickListener
 		stockTableScrollView = (TableLayout) findViewById(R.id.stockTableScrollView);
 		deleteStocksdata = (Button) findViewById(R.id.deleteStocksButton);
 		deleteStocksdata.setOnClickListener(this);
-		
+
 		addNew = (Button) findViewById(R.id.addNew);
-		
-		addNew.setOnClickListener(new View.OnClickListener() 
+
+		addNew.setOnClickListener(new View.OnClickListener()
 		{
-			
+
 			@Override
-			public void onClick(View arg0) 
+			public void onClick(View arg0)
 			{
 				Intent intent = new Intent(MainActivity.this, AddStockActivity.class);
 				startActivityForResult(intent, ADD_STOCK_WINDOW);
 			}
 		});
-		
-		 ((Button)findViewById(R.id.refresh)).setOnClickListener(new View.OnClickListener() 
-		 {
-			
+
+		((Button) findViewById(R.id.refresh)).setOnClickListener(new View.OnClickListener()
+		{
+
 			@Override
-			public void onClick(View v) {
-				String[] stocks = stockSymbolsEntered.getAll().keySet().toArray(new String[0]);
-				for (int i=0; i<stocks.length ; i++)
-				{
-					String sym = stocks[i];
-					View row = stockTableScrollView.getChildAt(i);
-					
-					TextView lastVal = (TextView)row.findViewById(R.id.stockSymbolLastValue);
-					TextView compName = (TextView)row.findViewById(R.id.stockSymCompanyName);
-					execAsyncAndUpdateValues(sym, compName, lastVal);
-				}
+			public void onClick(View v)
+			{
+				refreshStocksAsync();
 			}
+
 		});
 
 		updateSavedStockList(null);
 	}
-	
+
+	private void refreshStocksAsync()
+	{
+		String[] stocks = stockSymbolsEntered.getAll().keySet().toArray(new String[0]);
+		for (int i = 0; i < stocks.length; i++)
+		{
+			View row = stockTableScrollView.getChildAt(i);
+			TextView sym = (TextView) row.findViewById(R.id.stockSymbolTextView);
+			TextView lastVal = (TextView) row.findViewById(R.id.stockSymbolLastValue);
+			TextView compName = (TextView) row.findViewById(R.id.stockSymCompanyName);
+			execAsyncAndUpdateValues(sym.getText().toString(), compName, lastVal);
+		}
+	}
+
 	private void execAsyncAndUpdateValues(String symbol, final TextView companyName, final TextView lastValue)
 	{
 		String yahooURLFirst = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quote%20where%20symbol%20in%20(%22";
@@ -94,20 +100,17 @@ public class MainActivity extends Activity implements OnClickListener
 				companyName.setText(xmlPullParserResults.get(EStockAttributes.Name));
 			}
 		}).execute(yqlURL);
-		
 	}
-	
+
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
 		if (null != data)
 		{
 			saveStockSymbol(data.getStringExtra("result"));
-//			((TextView)findViewById(R.id.returnTxtValue)).setText(data.getStringExtra("result"));
-			
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
-	
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
@@ -137,7 +140,6 @@ public class MainActivity extends Activity implements OnClickListener
 		{
 			for (int i = 0; i < stocks.length; ++i)
 			{
-
 				insertStockInScrollView(stocks[i], i);
 			}
 		}
@@ -163,21 +165,22 @@ public class MainActivity extends Activity implements OnClickListener
 		View newStockRow = inflater.inflate(R.layout.stock_quote, null);
 
 		TextView newStockTextView = (TextView) newStockRow.findViewById(R.id.stockSymbolTextView);
-
 		newStockTextView.setText(stock);
 
 		Button stockQuoteButton = (Button) newStockRow.findViewById(R.id.stockQuoteButton);
 		stockQuoteButton.setOnClickListener(getStockActivityListener);
 		stockTableScrollView.addView(newStockRow, arrayIndex);
+		execAsyncAndUpdateValues(stock, (TextView) newStockRow.findViewById(R.id.stockSymCompanyName), (TextView) newStockRow.findViewById(R.id.stockSymbolLastValue));
 
 	}
-	
+
 	private void deleteAllStocks()
 	{
 		stockTableScrollView.removeAllViews();
 	}
 
-	public OnClickListener getStockActivityListener = new OnClickListener() {
+	public OnClickListener getStockActivityListener = new OnClickListener()
+	{
 
 		public void onClick(View v)
 		{
@@ -210,30 +213,32 @@ public class MainActivity extends Activity implements OnClickListener
 
 		switch (arg0.getId())
 		{
-//		case R.id.enterStockSymbolButton:
-//			if (stockSymbolEditText.getText().length() > 0)
-//			{
-//
-//				saveStockSymbol(stockSymbolEditText.getText().toString());
-//
-//				stockSymbolEditText.setText(""); // Clear EditText box
-//
-//				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-//				imm.hideSoftInputFromWindow(stockSymbolEditText.getWindowToken(), 0);
-//			}
-//			else
-//			{
-//
-//				// Create an alert dialog box
-//				AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-//
-//				builder.setTitle(R.string.invalid_stock_symbol);
-//				builder.setMessage(R.string.missing_stock_symbol);
-//				AlertDialog theAlertDialog = builder.create();
-//				theAlertDialog.show();
-//
-//			}
-//			break;
+		// case R.id.enterStockSymbolButton:
+		// if (stockSymbolEditText.getText().length() > 0)
+		// {
+		//
+		// saveStockSymbol(stockSymbolEditText.getText().toString());
+		//
+		// stockSymbolEditText.setText(""); // Clear EditText box
+		//
+		// InputMethodManager imm = (InputMethodManager)
+		// getSystemService(Context.INPUT_METHOD_SERVICE);
+		// imm.hideSoftInputFromWindow(stockSymbolEditText.getWindowToken(), 0);
+		// }
+		// else
+		// {
+		//
+		// // Create an alert dialog box
+		// AlertDialog.Builder builder = new
+		// AlertDialog.Builder(MainActivity.this);
+		//
+		// builder.setTitle(R.string.invalid_stock_symbol);
+		// builder.setMessage(R.string.missing_stock_symbol);
+		// AlertDialog theAlertDialog = builder.create();
+		// theAlertDialog.show();
+		//
+		// }
+		// break;
 
 		case R.id.deleteStocksButton:
 			deleteAllStocks();
