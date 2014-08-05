@@ -1,27 +1,18 @@
 package com.example.mystocks;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
+import java.util.HashMap;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+
+import com.example.mystocks.info.AbstractOnXMLParseAction;
+import com.example.mystocks.info.AsyncTaskGetAndParseXML;
+import com.example.mystocks.info.EStockAttributes;
 
 public class StockInfoActivity extends Activity
 {
@@ -36,22 +27,8 @@ public class StockInfoActivity extends Activity
 	TextView changeTextView;
 	TextView daysRangeTextView;
 
-	static final String KEY_ITEM = "quote";
-	static final String KEY_NAME = "Name";
-	static final String KEY_YEAR_LOW = "YearLow";
-	static final String KEY_YEAR_HIGH = "YearHigh";
-	static final String KEY_DAYS_LOW = "DaysLow";
-	static final String KEY_DAYS_HIGH = "DaysHigh";
-	static final String KEY_LAST_TRADE_PRICE = "LastTradePriceOnly";
-	static final String KEY_CHANGE = "Change";
-	static final String KEY_DAYS_RANGE = "DaysRange";
-
 	String yahooURLFirst = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quote%20where%20symbol%20in%20(%22";
 	String yahooURLSecond = "%22)&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
-
-	String[][] xmlPullParserArray = { { "AverageDailyVolume", "0" }, { "Change", "0" }, { "DaysLow", "0" }, { "DaysHigh", "0" }, { "YearLow", "0" }, { "YearHigh", "0" }, { "MarketCapitalization", "0" }, { "LastTradePriceOnly", "0" }, { "DaysRange", "0" }, { "Name", "0" }, { "Symbol", "0" }, { "Volume", "0" }, { "StockExchange", "0" } };
-
-	int parserArrayIncrement = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -74,122 +51,23 @@ public class StockInfoActivity extends Activity
 
 		// Create the YQL query
 		final String yqlURL = yahooURLFirst + stockSymbol + yahooURLSecond;
-		new MyAsyncTask().execute(yqlURL);
-	}
-
-	private class MyAsyncTask extends AsyncTask<String, String, String>
-	{
-		protected String doInBackground(String... args)
+		
+		
+		new AsyncTaskGetAndParseXML(new AbstractOnXMLParseAction()
 		{
-			try
+			@Override
+			public void doAction(HashMap<EStockAttributes, String> xmlPullParserResults)
 			{
-				Log.d("test", "In XmlPullParser");
-
-				XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-				factory.setNamespaceAware(true);
-
-				XmlPullParser parser = factory.newPullParser();
-
-				parser.setInput(new InputStreamReader(getUrlData(args[0])));
-				beginDocument(parser, "query");
-				int eventType = parser.getEventType();
-
-				do
-				{
-
-					nextElement(parser);
-					parser.next();
-
-					eventType = parser.getEventType();
-					if (eventType == XmlPullParser.TEXT)
-					{
-						String valueFromXML = parser.getText();
-
-						xmlPullParserArray[parserArrayIncrement++][1] = valueFromXML;
-
-					}
-
-				}
-				while (eventType != XmlPullParser.END_DOCUMENT);
-
+				companyNameTextView.setText(xmlPullParserResults.get(EStockAttributes.Name));
+				yearLowTextView.setText("Year Low: " + xmlPullParserResults.get(EStockAttributes.YearLow));
+				yearHighTextView.setText("Year High: " + xmlPullParserResults.get(EStockAttributes.YearHigh));
+				daysLowTextView.setText("Days Low: " + xmlPullParserResults.get(EStockAttributes.DaysLow));
+				daysHighTextView.setText("Days High: " + xmlPullParserResults.get(EStockAttributes.DaysHigh));
+				lastTradePriceOnlyTextView.setText("Last Price: " + xmlPullParserResults.get(EStockAttributes.LastTradePriceOnly));
+				changeTextView.setText("Change: " + xmlPullParserResults.get(EStockAttributes.Change));
+				daysRangeTextView.setText("Daily Price Range: " + xmlPullParserResults.get(EStockAttributes.DaysRange));
 			}
-
-			catch (ClientProtocolException e)
-			{
-				e.printStackTrace();
-			}
-			catch (XmlPullParserException e)
-			{
-				e.printStackTrace();
-			}
-			catch (URISyntaxException e)
-			{
-				e.printStackTrace();
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-
-			finally
-			{
-			}
-
-			return null;
-		}
-
-		public InputStream getUrlData(String url) throws URISyntaxException, ClientProtocolException, IOException
-		{
-
-			DefaultHttpClient client = new DefaultHttpClient();
-			HttpGet method = new HttpGet(new URI(url));
-
-			HttpResponse res = client.execute(method);
-
-			return res.getEntity().getContent();
-		}
-
-		public final void beginDocument(XmlPullParser parser, String firstElementName) throws XmlPullParserException, IOException
-		{
-			int type;
-			while ((type = parser.next()) != parser.START_TAG && type != parser.END_DOCUMENT)
-			{
-				;
-			}
-
-			if (type != parser.START_TAG)
-			{
-				throw new XmlPullParserException("No start tag found");
-			}
-
-			if (!parser.getName().equals(firstElementName))
-			{
-				throw new XmlPullParserException("Unexpected start tag: found " + parser.getName() + ", expected " + firstElementName);
-			}
-		}
-
-		public final void nextElement(XmlPullParser parser) throws XmlPullParserException, IOException
-		{
-			int type;
-
-			while ((type = parser.next()) != parser.START_TAG && type != parser.END_DOCUMENT)
-			{
-				;
-			}
-		}
-
-		protected void onPostExecute(String result)
-		{
-			companyNameTextView.setText(xmlPullParserArray[9][1]);
-			yearLowTextView.setText("Year Low: " + xmlPullParserArray[4][1]);
-			yearHighTextView.setText("Year High: " + xmlPullParserArray[5][1]);
-			daysLowTextView.setText("Days Low: " + xmlPullParserArray[2][1]);
-			daysHighTextView.setText("Days High: " + xmlPullParserArray[3][1]);
-			lastTradePriceOnlyTextView.setText("Last Price: " + xmlPullParserArray[7][1]);
-			changeTextView.setText("Change: " + xmlPullParserArray[1][1]);
-			daysRangeTextView.setText("Daily Price Range: " + xmlPullParserArray[8][1]);
-		}
-
+		}).execute(yqlURL);
 	}
 
 	@Override

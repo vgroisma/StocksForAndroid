@@ -1,6 +1,11 @@
 package com.example.mystocks;
 
 import java.util.Arrays;
+import java.util.HashMap;
+
+import com.example.mystocks.info.AbstractOnXMLParseAction;
+import com.example.mystocks.info.AsyncTaskGetAndParseXML;
+import com.example.mystocks.info.EStockAttributes;
 
 import android.app.Activity;
 import android.content.Context;
@@ -75,12 +80,21 @@ public class MainActivity extends Activity implements OnClickListener
 		updateSavedStockList(null);
 	}
 	
-	private void execAsyncAndUpdateValues(String symbol, TextView companyName, TextView lastValue)
+	private void execAsyncAndUpdateValues(String symbol, final TextView companyName, final TextView lastValue)
 	{
 		String yahooURLFirst = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quote%20where%20symbol%20in%20(%22";
 		String yahooURLSecond = "%22)&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
 		final String yqlURL = yahooURLFirst + symbol + yahooURLSecond;
-		new AsyncTaskUpdateLastValue(lastValue, companyName).execute(yqlURL);
+		new AsyncTaskGetAndParseXML(new AbstractOnXMLParseAction()
+		{
+			@Override
+			public void doAction(HashMap<EStockAttributes, String> xmlPullParserResults)
+			{
+				lastValue.setText(xmlPullParserResults.get(EStockAttributes.LastTradePriceOnly));
+				companyName.setText(xmlPullParserResults.get(EStockAttributes.Name));
+			}
+		}).execute(yqlURL);
+		
 	}
 	
 	@Override

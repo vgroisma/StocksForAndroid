@@ -1,4 +1,4 @@
-package com.example.mystocks;
+package com.example.mystocks.info;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,23 +17,18 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.TextView;
 
-public class AsyncTaskUpdateLastValue extends AsyncTask<String, String, String>
+
+public class AsyncTaskGetAndParseXML extends AsyncTask<String, String, String>
 {
 
-	private TextView lastVal;
-	private TextView companyName;
-	
-	HashMap<String, String> xmlPullParserResults = new HashMap<String, String>();
-	//String[][] xmlPullParserArray = { { "AverageDailyVolume", "0" }, { "Change", "0" }, { "DaysLow", "0" }, { "DaysHigh", "0" }, { "YearLow", "0" }, { "YearHigh", "0" }, { "MarketCapitalization", "0" }, { "LastTradePriceOnly", "0" }, { "DaysRange", "0" }, { "Name", "0" }, { "Symbol", "0" }, { "Volume", "0" }, { "StockExchange", "0" } };
-	int parserArrayIncrement = 0;
+	final AbstractOnXMLParseAction postAction;
+	HashMap<EStockAttributes, String> xmlPullParserResults = new HashMap<EStockAttributes, String>();
 
 	
-	public AsyncTaskUpdateLastValue(TextView lastVal, TextView companyName)
+	public AsyncTaskGetAndParseXML(AbstractOnXMLParseAction postAction)
 	{
-		this.lastVal = lastVal;
-		this.companyName = companyName;
+		this.postAction = postAction;
 	}
 
 	protected String doInBackground(String... args)
@@ -62,8 +57,11 @@ public class AsyncTaskUpdateLastValue extends AsyncTask<String, String, String>
 				if (eventType == XmlPullParser.TEXT)
 				{
 					String valueFromXML = parser.getText();
-					xmlPullParserResults.put(key, valueFromXML);
-//					xmlPullParserArray[parserArrayIncrement++][1] = valueFromXML;
+					
+					if (EStockAttributes.fidnByName(key) != null)
+					{
+						xmlPullParserResults.put(EStockAttributes.fidnByName(key), valueFromXML);
+					}
 				}
 
 			}
@@ -140,14 +138,6 @@ public class AsyncTaskUpdateLastValue extends AsyncTask<String, String, String>
 
 	protected void onPostExecute(String result)
 	{
-		if (lastVal!=null)
-		{
-			lastVal.setText(xmlPullParserResults.get("LastTradePriceOnly"));
-		}
-		if (companyName!=null)
-		{
-			companyName.setText(xmlPullParserResults.get("Name"));
-		}
+		postAction.doAction(xmlPullParserResults);
 	}
-
 }

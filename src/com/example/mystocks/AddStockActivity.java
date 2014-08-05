@@ -1,6 +1,8 @@
 package com.example.mystocks;
 
 
+import java.util.HashMap;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -13,6 +15,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.example.mystocks.info.AbstractOnXMLParseAction;
+import com.example.mystocks.info.AsyncTaskGetAndParseXML;
+import com.example.mystocks.info.EStockAttributes;
 
 public class AddStockActivity extends Activity {
 
@@ -51,10 +57,20 @@ public class AddStockActivity extends Activity {
 					String yahooURLSecond = "%22)&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
 					
 					final String yqlURL = yahooURLFirst + tv.getText().toString() + yahooURLSecond;
-					TextView lastValue = (TextView) findViewById(R.id.lastVal);
-					TextView CompanyName = (TextView) findViewById(R.id.compName);
-					new AsyncTaskUpdateLastValue(lastValue, CompanyName).execute(yqlURL);
-					((Button)findViewById(R.id.addNew)).setActivated(true);
+					final TextView lastValue = (TextView) findViewById(R.id.lastVal);
+					final TextView companyName = (TextView) findViewById(R.id.compName);
+					
+					new AsyncTaskGetAndParseXML(new AbstractOnXMLParseAction()
+					{
+						@Override
+						public void doAction(HashMap<EStockAttributes, String> xmlPullParserResults)
+						{
+							lastValue.setText(xmlPullParserResults.get(EStockAttributes.LastTradePriceOnly));
+							companyName.setText(xmlPullParserResults.get(EStockAttributes.Name));
+						}
+					}).execute(yqlURL);
+					
+//					((Button)findViewById(R.id.addNew)).setActivated(true);
 				}
 				else
 				{
