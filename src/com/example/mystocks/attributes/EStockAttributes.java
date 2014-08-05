@@ -1,4 +1,4 @@
-package com.example.mystocks.info;
+package com.example.mystocks.attributes;
 
 public enum EStockAttributes 
 {

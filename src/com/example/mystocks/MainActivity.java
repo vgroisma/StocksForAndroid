@@ -3,9 +3,9 @@ package com.example.mystocks;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import com.example.mystocks.info.AbstractOnXMLParseAction;
-import com.example.mystocks.info.AsyncTaskGetAndParseXML;
-import com.example.mystocks.info.EStockAttributes;
+import com.example.mystocks.attributes.AbstractOnXMLParseAction;
+import com.example.mystocks.attributes.AsyncTaskGetAndParseXML;
+import com.example.mystocks.attributes.EStockAttributes;
 
 import android.app.Activity;
 import android.content.Context;

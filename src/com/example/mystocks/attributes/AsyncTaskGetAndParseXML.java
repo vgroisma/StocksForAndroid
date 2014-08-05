@@ -1,4 +1,4 @@
-package com.example.mystocks.info;
+package com.example.mystocks.attributes;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -15,9 +15,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.mystocks.info.AbstractOnXMLParseAction;
-import com.example.mystocks.info.AsyncTaskGetAndParseXML;
-import com.example.mystocks.info.EStockAttributes;
+import com.example.mystocks.attributes.AbstractOnXMLParseAction;
+import com.example.mystocks.attributes.AsyncTaskGetAndParseXML;
+import com.example.mystocks.attributes.EStockAttributes;
 
 public class AddStockActivity extends Activity
 {
