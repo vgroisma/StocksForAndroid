@@ -1,6 +1,5 @@
 package com.example.mystocks;
 
-
 import java.util.HashMap;
 
 import android.app.Activity;
@@ -20,19 +19,36 @@ import com.example.mystocks.info.AbstractOnXMLParseAction;
 import com.example.mystocks.info.AsyncTaskGetAndParseXML;
 import com.example.mystocks.info.EStockAttributes;
 
-public class AddStockActivity extends Activity {
-
+public class AddStockActivity extends Activity
+{
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_stock);
+		defineListenersForButtons();
+	}
 
-		((Button)findViewById(R.id.addNew)).setActivated(false);
-		((Button)findViewById(R.id.addNew)).setOnClickListener(new View.OnClickListener() {
+	private void defineListenersForButtons()
+	{
+		((Button) findViewById(R.id.cancel)).setOnClickListener(new View.OnClickListener()
+		{
 
 			@Override
-			public void onClick(View v) {
-				TextView tv = (TextView)findViewById(R.id.newSym);
+			public void onClick(View v)
+			{
+				onBackPressed();
+			}
+		});
+
+		((Button) findViewById(R.id.addNew)).setEnabled(false);
+		((Button) findViewById(R.id.addNew)).setOnClickListener(new View.OnClickListener()
+		{
+
+			@Override
+			public void onClick(View v)
+			{
+				TextView tv = (TextView) findViewById(R.id.newSym);
 				Intent intent = new Intent();
 				intent.putExtra("result", tv.getEditableText().toString());
 				setResult(Activity.RESULT_OK, intent);
@@ -41,25 +57,26 @@ public class AddStockActivity extends Activity {
 			}
 		});
 
-		((Button)findViewById(R.id.refresh)).setOnClickListener(new View.OnClickListener() {
+		((Button) findViewById(R.id.refresh)).setOnClickListener(new View.OnClickListener()
+		{
 
 			@Override
-			public void onClick(View v) {
-				EditText tv = (EditText)findViewById(R.id.newSym);
-				
-				
+			public void onClick(View v)
+			{
+				EditText tv = (EditText) findViewById(R.id.newSym);
+
 				if (tv.getText().length() > 0)
 				{
 					InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 					imm.hideSoftInputFromWindow(tv.getWindowToken(), 0);
-					
+
 					String yahooURLFirst = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quote%20where%20symbol%20in%20(%22";
 					String yahooURLSecond = "%22)&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
-					
+
 					final String yqlURL = yahooURLFirst + tv.getText().toString() + yahooURLSecond;
 					final TextView lastValue = (TextView) findViewById(R.id.lastVal);
 					final TextView companyName = (TextView) findViewById(R.id.compName);
-					
+
 					new AsyncTaskGetAndParseXML(new AbstractOnXMLParseAction()
 					{
 						@Override
@@ -67,10 +84,9 @@ public class AddStockActivity extends Activity {
 						{
 							lastValue.setText(xmlPullParserResults.get(EStockAttributes.LastTradePriceOnly));
 							companyName.setText(xmlPullParserResults.get(EStockAttributes.Name));
+							((Button) findViewById(R.id.addNew)).setEnabled(true);
 						}
 					}).execute(yqlURL);
-					
-//					((Button)findViewById(R.id.addNew)).setActivated(true);
 				}
 				else
 				{
@@ -84,27 +100,25 @@ public class AddStockActivity extends Activity {
 				}
 			}
 		});
-
-
-
-
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.add_stock, menu);
 		return true;
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
+		if (id == R.id.action_settings)
+		{
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
