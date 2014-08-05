@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<query xmlns:yahoo="http://www.yahooapis.com/v1/base.rng"
+    yahoo:count="1" yahoo:created="2013-07-18T17:45:46Z" yahoo:lang="en-US">
+    <results>
+        <quote symbol="MSFT">
+            <AverageDailyVolume>49993000</AverageDailyVolume>
+            <Change>-0.366</Change>
+            <DaysLow>35.34</DaysLow>
+            <DaysHigh>35.89</DaysHigh>
+            <YearLow>26.26</YearLow>
+            <YearHigh>36.43</YearHigh>
+            <MarketCapitalization>295.4B</MarketCapitalization>
+            <LastTradePriceOnly>35.374</LastTradePriceOnly>
+            <DaysRange>35.34 - 35.89</DaysRange>
+            <Name>Microsoft Corpora</Name>
+            <Symbol>MSFT</Symbol>
+            <Volume>22859948</Volume>
+            <StockExchange>NasdaqNM</StockExchange>
+        </quote>
+    </results>
+</query>

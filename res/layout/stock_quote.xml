@@ -1,0 +1,41 @@
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/stockQuoteRow"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:padding="@dimen/activity_horizontal_margin" >
+
+    <TextView
+        android:id="@+id/stockSymCompanyName"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:text="CompanyName" />
+
+    <TextView
+        android:id="@+id/stockSymbolTextView"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Sym"
+        android:textColor="@color/black"
+        android:textIsSelectable="true" />
+
+    <TextView
+        android:id="@+id/stockSymbolLastValue"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="lastVal"
+        android:textColor="@color/black"
+        android:textIsSelectable="true" />
+
+    <Button
+        android:id="@+id/stockQuoteButton"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/get_stock_quote" />
+
+</TableRow>

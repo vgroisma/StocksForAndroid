@@ -1,0 +1,96 @@
+package com.example.mystocks;
+
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+public class AddStockActivity extends Activity {
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_add_stock);
+
+		((Button)findViewById(R.id.addNew)).setActivated(false);
+		((Button)findViewById(R.id.addNew)).setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				TextView tv = (TextView)findViewById(R.id.newSym);
+				Intent intent = new Intent();
+				intent.putExtra("result", tv.getEditableText().toString());
+				setResult(Activity.RESULT_OK, intent);
+				finish();
+
+			}
+		});
+
+		((Button)findViewById(R.id.refresh)).setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				EditText tv = (EditText)findViewById(R.id.newSym);
+				
+				
+				if (tv.getText().length() > 0)
+				{
+					InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+					imm.hideSoftInputFromWindow(tv.getWindowToken(), 0);
+					
+					String yahooURLFirst = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quote%20where%20symbol%20in%20(%22";
+					String yahooURLSecond = "%22)&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+					
+					final String yqlURL = yahooURLFirst + tv.getText().toString() + yahooURLSecond;
+					TextView lastValue = (TextView) findViewById(R.id.lastVal);
+					TextView CompanyName = (TextView) findViewById(R.id.compName);
+					new AsyncTaskUpdateLastValue(lastValue, CompanyName).execute(yqlURL);
+					((Button)findViewById(R.id.addNew)).setActivated(true);
+				}
+				else
+				{
+
+					// Create an alert dialog box
+					AlertDialog.Builder builder = new AlertDialog.Builder(AddStockActivity.this);
+					builder.setTitle(R.string.invalid_stock_symbol);
+					builder.setMessage(R.string.missing_stock_symbol);
+					AlertDialog theAlertDialog = builder.create();
+					theAlertDialog.show();
+				}
+			}
+		});
+
+
+
+
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.add_stock, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		int id = item.getItemId();
+		if (id == R.id.action_settings) {
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+}

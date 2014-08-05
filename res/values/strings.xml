@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">MyStocks</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="stock_symbol">symbol</string>
+    <string name="enter_stock_symbol">add</string>
+    <string name="stock_symbol_list">Stocks List</string>
+    <string name="title_activity_stock_info">StockInfoActivity</string>
+    <string name="stock_year_low">stock year low</string>
+    <string name="stock_year_high">stock year high</string>
+    <string name="stock_days_low">stock days low</string>
+    <string name="stock_days_high">stock days high</string>
+    <string name="last_trade_price_only">last trade price only</string>
+    <string name="change">change</string>
+    <string name="days_range">days range</string>
+    <string name="get_stock_quote">info</string>
+    <string name="go_to_website">website</string>
+    <string name="invalid_stock_symbol">invalid stock symbol</string>
+    <string name="missing_stock_symbol">missing stock symbol</string>
+    <string name="yahoo_stock_url">yahoo stock url</string>
+    <string name="medium_text">Medium Text</string>
+    <string name="title_activity_add_stock">AddStockActivity</string>
+    <string name="add_new_stock">Add new stock</string>
+    <string name="enter_symbol">Enter Symbol</string>
+    <string name="query">Query</string>
+    <string name="company_name">Company Name</string>
+    <string name="last_value">Last Value</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
+</resources>
