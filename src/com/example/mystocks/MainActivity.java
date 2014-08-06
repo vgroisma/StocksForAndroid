@@ -1,17 +1,17 @@
 package com.example.mystocks;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 
-import com.example.mystocks.attributes.AbstractOnXMLParseAction;
-import com.example.mystocks.attributes.AsyncTaskGetAndParseXML;
-import com.example.mystocks.attributes.EStockAttributes;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +22,11 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.example.mystocks.attributes.AbstractOnXMLParseAction;
+import com.example.mystocks.attributes.AsyncTaskGetAndParseXML;
+import com.example.mystocks.attributes.EStockAttributes;
+
+@SuppressLint("SimpleDateFormat")
 public class MainActivity extends Activity implements OnClickListener
 {
 
@@ -84,6 +89,13 @@ public class MainActivity extends Activity implements OnClickListener
 			TextView compName = (TextView) row.findViewById(R.id.stockSymCompanyName);
 			execAsyncAndUpdateValues(sym.getText().toString(), compName, lastVal);
 		}
+		
+		SimpleDateFormat sdfDate = new SimpleDateFormat("HH:mm:ss");
+	    Date now = new Date();
+	    String strDate = sdfDate.format(now);
+	    TextView refreshedAtText = ((TextView)findViewById(R.id.lastRefresh));
+	    refreshedAtText.setText("Refreshed at "+strDate);
+	    refreshedAtText.setVisibility(View.VISIBLE);
 	}
 
 	private void execAsyncAndUpdateValues(String symbol, final TextView companyName, final TextView lastValue)
@@ -165,7 +177,7 @@ public class MainActivity extends Activity implements OnClickListener
 		View newStockRow = inflater.inflate(R.layout.stock_quote, null);
 
 		TextView newStockTextView = (TextView) newStockRow.findViewById(R.id.stockSymbolTextView);
-		newStockTextView.setText(stock);
+		newStockTextView.setText(Html.fromHtml("<b>"+stock+"<\b>"));
 
 		Button stockQuoteButton = (Button) newStockRow.findViewById(R.id.stockQuoteButton);
 		stockQuoteButton.setOnClickListener(getStockActivityListener);
